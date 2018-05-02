@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  edge-envoy
+spec:
+  selector:
+    run: edge-envoy
+  type:  LoadBalancer
+  ports:
+  - name:  http
+    port:  80
+    targetPort:  80
+---
+#apiVersion: apps/v1 #v1.9.x
+apiVersion: extensions/v1beta1 #v1.8.x
+kind: Deployment
+metadata:
+  name: edge-envoy
+  labels:
+    run: edge-envoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: edge-envoy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        run: edge-envoy
+    spec:
+      containers:
+      # Edge Envoy Proxy Container
+      - image: envoyproxy/envoy-alpine:v1.6.0
+        command: 
+          - "/usr/local/bin/envoy"
+        args:
+          - "--config-path /etc/envoy/envoy.json"
+          - "--mode serve"
+          - "--service-cluster item"
+        imagePullPolicy: Always
+        name: edge-envoy
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: envoy
+          mountPath: /etc/envoy
+      volumes:
+      - name: envoy
+        configMap:
+          name: edge-envoy-config
