@@ -29,7 +29,7 @@
                         "prefix": "/",
                         "cluster": "node-app-latest",
                         "runtime": {
-                          "key": "routing.traffic-shift.node-app",
+                          "key": "routing.ts.node-app.latest",
                           "default": 100
                         }
                       },
@@ -59,7 +59,7 @@
       "address": "tcp://127.0.0.1:8001"
     },
     "runtime": {
-      "symlink_root": "/srv/runtime_data/current",
+      "symlink_root": "/srv/runtime",
       "subdirectory": "envoy"
     },
     "cluster_manager": {

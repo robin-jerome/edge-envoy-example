@@ -50,9 +50,14 @@ spec:
         - containerPort: 80
           protocol: TCP
         volumeMounts:
-        - name: envoy
+        - name: edge-envoy-config
           mountPath: /etc/envoy
+        - name: edge-envoy-rt-config
+          mountPath: /srv/runtime/envoy/routing/ts/node-app
       volumes:
-      - name: envoy
+      - name: edge-envoy-config
         configMap:
           name: edge-envoy-config
+      - name: edge-envoy-rt-config
+        configMap:
+          name: edge-envoy-rt-config
