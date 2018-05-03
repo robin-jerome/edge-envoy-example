@@ -1,0 +1,92 @@
+{
+    "listeners": [
+      {
+        "name": "http-ingress",
+        "address": "tcp://0.0.0.0:80",
+        "filters": [
+          {
+            "type": "read",
+            "name": "http_connection_manager",
+            "config": {
+              "codec_type": "auto",
+              "stat_prefix": "ingress-http",
+              "access_log": [
+                {  
+                  "path": "/tmp/access.log",
+                  "filter": {
+                    "type": "not_healthcheck"
+                  }
+                }
+              ],
+              "route_config": {
+                "virtual_hosts": [
+                  {
+                    "name": "node-app-latest-hosts",
+                    "domains": [ "*" ],
+                    "routes": [
+                      {
+                        "timeout_ms": 0,
+                        "prefix": "/",
+                        "cluster": "node-app-latest",
+                        "runtime": {
+                          "key": "routing.traffic-shift.node-app",
+                          "default": 100
+                        }
+                      },
+                      {
+                        "timeout_ms": 0,
+                        "prefix": "/",
+                        "cluster": "node-app-campaign"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "filters": [
+                {
+                  "type": "decoder",
+                  "name": "router",
+                  "config": {}
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "admin": {
+      "access_log_path": "/tmp/envoy-access-log",
+      "address": "tcp://127.0.0.1:8001"
+    },
+    "runtime": {
+      "symlink_root": "/srv/runtime_data/current",
+      "subdirectory": "envoy"
+    },
+    "cluster_manager": {
+      "clusters": [
+        {
+          "name": "node-app-latest",
+          "connect_timeout_ms": 250,
+          "type": "logical_dns",
+          "lb_type": "round_robin",
+          "hosts": [
+            {
+              "url": "tcp://node-app-latest.envoy-testing.svc.cluster.local:80"
+            }
+          ]
+        },
+        {
+          "name": "node-app-campaign",
+          "connect_timeout_ms": 250,
+          "type": "logical_dns",
+          "lb_type": "round_robin",
+          "hosts": [
+            {
+              "url": "tcp://node-app-campaign.envoy-testing.svc.cluster.local:80"
+            }
+          ]
+        }
+      ]
+    }
+}
+  
