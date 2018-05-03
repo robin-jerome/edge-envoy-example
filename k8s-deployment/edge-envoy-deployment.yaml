@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name:  edge-envoy
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
   selector:
     run: edge-envoy
@@ -19,7 +21,7 @@ metadata:
   labels:
     run: edge-envoy
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       run: edge-envoy
