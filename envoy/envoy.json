@@ -10,14 +10,6 @@
             "config": {
               "codec_type": "auto",
               "stat_prefix": "ingress-http",
-              "access_log": [
-                {  
-                  "path": "/tmp/access.log",
-                  "filter": {
-                    "type": "not_healthcheck"
-                  }
-                }
-              ],
               "route_config": {
                 "virtual_hosts": [
                   {
@@ -46,8 +38,8 @@
       }
     ],
     "admin": {
-      "access_log_path": "/tmp/envoy-access-log",
-      "address": "tcp://127.0.0.1:8001"
+      "access_log_path": "/var/log/envoy/admin-access.log",
+      "address": "tcp://127.0.0.1:9999"
     },
     "cluster_manager": {
       "clusters": [

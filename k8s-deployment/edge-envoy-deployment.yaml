@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name:  edge-envoy
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  #annotations:
+  #  service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
   selector:
     run: edge-envoy
@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
       # Edge Envoy Proxy Container
-      - image: envoyproxy/envoy-alpine:v1.6.0
+      - image: envoyproxy/envoy-alpine:latest
         command: 
           - "/usr/local/bin/envoy"
         args:
